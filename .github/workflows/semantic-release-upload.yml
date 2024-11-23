@@ -1,0 +1,31 @@
+name: Semantic release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          persist-credentials: false # The auth token is persisted in the local git config. semantic-release picks this one instead of GH_TOKEN
+          ref: main
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run python-semantic-release
+        run: |
+          pip install python-semantic-release
+          mkdir dist && cd custom_components/mazda && zip ../../dist/mazda.zip . -r && cd ../../
+          semantic-release publish
+        env:
+          GH_TOKEN: "${{ secrets.GH_TOKEN }}"

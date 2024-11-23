@@ -1,0 +1,3 @@
+[tool.semantic_release]
+allow_zero_version = false
+mask_initial_release = true
